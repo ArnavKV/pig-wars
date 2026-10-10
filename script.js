@@ -416,6 +416,9 @@ var posArray1 = [];//anvil droppers
 var posArray2 = [];//shreikers
 var posArray3 = [];//star
 document.addEventListener('keydown', function(event) {
+  if (['ArrowLeft', 'ArrowRight', 'AltLeft', 'AltRight', 'ShiftLeft', 'ShiftRight'].includes(event.code)) {
+    event.preventDefault();
+  }
   if (event.key === 's' && y + 1 < height) {//down for left character
     state1[y][x] = E;
     y += 1;
@@ -495,7 +498,7 @@ document.addEventListener('keydown', function(event) {
     render();
   }
   if (event.keyCode === 16) {//Right shift (anvil dropper)
-    if (state1[y1+1][x1] == E  && state[y1+1][x1] != p && score>=3) {
+    if (state1[y1+1][x1] == E  && state[y1+1][x1] != p && score>=5) {
       state1[y1+1][x1] = crafter;
       addScore(-5);
       posArray1.push(x1);
@@ -510,13 +513,13 @@ document.addEventListener('keydown', function(event) {
       posArray2.push(x1);
       render();
     }
-    if (state1[y1+1][x1] == cs && score>=8) {
+    else if (state1[y1+1][x1] == cs && score>=8) {
       state1[y1+1][x1] = shrieker;
       addScore(-8);
       posArray2.push(x1);
       render();
     }
-    if (state1[y1+1][x1] == E && state[y1+1][x1] != p && score>=3) {
+    else if (state1[y1+1][x1] == E && state[y1+1][x1] != p && score>=3) {
       state1[y1+1][x1] = s;
       addScore(-3);
       posArray2.push(x1);
@@ -591,61 +594,61 @@ document.addEventListener('keydown', function(event) {
     if (state1[y][x + 1] == dropper) {
       state1[y][x + 1] = E;
       addScore(2);
-      posArray.splice(posArray.indexOf(y), 1);
+      posArray = posArray.filter(row => row !== y);
       render();
     }
     if (state1[y][x + 1] == dropper2) {
       state1[y][x + 1] = E;
       addScore(4);
-      posArray.splice(posArray.indexOf(y), 2);
+      posArray = posArray.filter(row => row !== y);
       render();
     }
     if (state1[y][x + 1] == dropper3) {
       state1[y][x + 1] = E;
       addScore(7);
-      posArray.splice(posArray.indexOf(y), 3);
+      posArray = posArray.filter(row => row !== y);
       render();
     }
     if (state1[y][x + 1] == dropper4) {
       state1[y][x + 1] = E;
       addScore(10);
-      posArray.splice(posArray.indexOf(y), 4);
+      posArray = posArray.filter(row => row !== y);
       render();
     }
     if (state1[y][x + 1] == flamer1) {
       state1[y][x + 1] = E;
       addScore(10);
-      posArray.splice(posArray.indexOf(y), 4);
+      posArray = posArray.filter(row => row !== y);
       render();
     }
     if (state1[y][x + 1] == flamer2) {
       state1[y][x + 1] = E;
       addScore(15);
-      posArray.splice(posArray.indexOf(y), 1);
+      posArray = posArray.filter(row => row !== y);
       render();
     }
     if (state1[y][x + 1] == flamer3) {
       state1[y][x + 1] = E;
       addScore(20);
-      posArray.splice(posArray.indexOf(y), 2);
+      posArray = posArray.filter(row => row !== y);
       render();
     }
     if (state1[y][x + 1] == dispenser1) {
       state1[y][x + 1] = E;
       addScore(4);
-      posArray.splice(posArray.indexOf(y), 2);
+      posArray = posArray.filter(row => row !== y);
       render();
     }
     if (state1[y][x + 1] == dispenser2) {
       state1[y][x + 1] = E;
       addScore(7)
-      posArray.splice(posArray.indexOf(y), 3);
+      posArray = posArray.filter(row => row !== y);
       render();
     }
     if (state1[y][x + 1] == dispenser3) {
       state1[y][x + 1] = E;
       addScore(10);
-      posArray.splice(posArray.indexOf(y), 3);
+      posArray = posArray.filter(row => row !== y);
       render();
     }
     if (state1[y1 + 1][x1] == crafter) {
@@ -657,19 +660,19 @@ document.addEventListener('keydown', function(event) {
     if (state1[y1+1][x1] == s) {
       state1[y1+1][x1] = E;
       addScore(1);
-      posArray2.splice(posArray2.indexOf(x1), 1);
+      posArray2 = posArray2.filter(column => column !== x1);
       render();
     }
     if (state1[y1+1][x1] == cs) {
       state1[y1+1][x1] = E;
       addScore(3);
-      posArray2.splice(posArray2.indexOf(x1), 1);
+      posArray2 = posArray2.filter(column => column !== x1);
       render();
     }
     if (state1[y1+1][x1] == shrieker) {
       state1[y1+1][x1] = E;
       addScore(5);
-      posArray2.splice(posArray2.indexOf(x1), 2);
+      posArray2 = posArray2.filter(column => column !== x1);
       render();
     }
   }
@@ -730,13 +733,10 @@ function shoot() {//shoots projectiles from left to right which are the snowball
     else if (state1[pos][x + 1] == flamer3){
       replace = fire3;
     }
+    if (replace == E) continue;
+    let breaker = [dispenser1, dispenser2, dispenser3].includes(state1[pos][x + 1]);
+    let teleported = false;
     for (let i = x + 2; i < state1[0].length; i++) {
-      if (state1[pos][1] == dispenser1 || state1[pos][1] == dispenser2 || state1[pos][1] == dispenser3){
-        breaker = true;//boolean to check if it can breaker "harder" things example: the blockers and helmets
-      }
-      else{
-        breaker = false;
-      }
       let hit = state1[pos][x + i];
       if (hit == a) {
         state1[pos][x + i] = pig;
@@ -904,6 +904,8 @@ function shoot() {//shoots projectiles from left to right which are the snowball
       }
       if(state1[pos][x+i] == portal)//moves to the location of the other portal and will continue on at that point
         {
+          if (portals !== 2 || teleported) break;
+          teleported = true;
           if(pos == yp2 && i == xp2)
           {
             i = xp1;
@@ -956,7 +958,7 @@ var spawnInterval = 23;
 timer();
 function timer() {//keeps track of time
   secs = (Math.round((secs - 0.1) * 10)) / 10;
-  let bigSecs = secs*10;
+  let bigSecs = Math.round(secs*10);
   if (bigSecs % 6 == 0) {
     moveAnvils();
     render();
@@ -1060,13 +1062,14 @@ function timer() {//keeps track of time
     shoot();
     shootBoom();
   }
-  if(moveInterval == 0) // the player wins when the pigs stop moving.
+  if(moveInterval <= 0) // the player wins when the pigs stop moving.
   {
     if(localStorage.getItem("highscore") == null || parseInt(localStorage.getItem("highscore")) < score){
       localStorage.setItem("highscore", score);
     }
-    window.location.href = 'win.html';
     localStorage.setItem("score", score);
+    window.location.href = 'win.html';
+    return;
   }
   if (bigSecs % spawnInterval == 0) {
     summonPig();
@@ -1075,7 +1078,7 @@ function timer() {//keeps track of time
     moveInterval-=1;
   }
   if (bigSecs % 1000 == 0){//every 100 seconds the pigs spawn faster
-    spawnInterval -= 1;
+    spawnInterval = Math.max(1, spawnInterval - 1);
   }
 }
 
@@ -1127,6 +1130,7 @@ function sleep(ms) {//https://www.sitepoint.com/delay-sleep-pause-wait/
 }
 
 function summonPig() {//spawns a random pig at the bottom right
+  if (pigArray.some(pos => pos[0] == 7 && pos[1] == 11)) return;
   let piggy = genPig(false);
   state1[7][11] = piggy;
   let pigPos = [7, 11, piggy, false];
@@ -1140,19 +1144,20 @@ function movePigs() {
   let removal = [];//locations marked for removal
   for (let i = 0; i < pigArray.length; i++) {
     let pos = pigArray[i];
+    moved = false;
+    moved1 = false;
+    pigArray[i][2] = state1[pigArray[i][0]][pigArray[i][1]];
+    if (pigArray[i][2] == poof || isProjectile(pigArray[i][2]) || pigArray[i][2] == E || pigArray[i][2] == poof1|| pigArray[i][2] == poof2 || pigArray[i][2] == crystal) {
+      removal.push(i);
+      continue;
+    }
     if (pos[0] == 0 && pos[1] == 0) {// "you lose"
       if(localStorage.getItem("highscore") == null || parseInt(localStorage.getItem("highscore")) < score){// checks if the highscore is null or if it is less than your score and sets highscore to your score if it is higher
         localStorage.setItem("highscore", score);
       }
       localStorage.setItem("score", score);
       window.location.href = "lose.html";
-    }
-    moved = false;
-    moved1 = false;
-    pigArray[i][2] = state1[pigArray[i][0]][pigArray[i][1]];
-    if (pigArray[i][2] == poof || pigArray[i][2] == snow || pigArray[i][2] == E || pigArray[i][2] == poof1|| pigArray[i][2] == poof2 || pigArray[i][2] == crystal) {
-      removal.push(i);
-      continue;
+      return;
     }
     if (pos[1] - 1 >= 0) {//LEFT
       if (state[pos[0]][pos[1] - 1] == p) {
@@ -1291,15 +1296,14 @@ function moveAnvils() {//moves all the anvils one unit down using the anvilArray
   for (let i = 0; i < anvilArray.length; i++) {
     let pos = anvilArray[i];
     anvilArray[i][0] = pos[0] + 1;
-    if (anvilArray[i][0] >= height-1){// if its at the bottom of the map it will remove it from the array
+    if (anvilArray[i][0] >= height){// if its at the bottom of the map it will remove it from the array
       removal.push(i);
       state1[anvilArray[i][0]-1][anvilArray[i][1]] = E;
-      state1[anvilArray[i][0]][anvilArray[i][1]] = poof;      
+
       continue;
     }
     if(state1[anvilArray[i][0]-1][anvilArray[i][1]] != E && state1[anvilArray[i][0]-1][anvilArray[i][1]] != crafter && state1[anvilArray[i][0]-1][anvilArray[i][1]] != anvil && !isProjectile(state1[anvilArray[i][0]-1][anvilArray[i][1]])){//removal of the anvil if it hits a soldier or crate
       console.log(state1[anvilArray[i][0]-1][anvilArray[i][1]]);
-      state1[anvilArray[i][0]-1][anvilArray[i][1]] = E;
       if(state1[anvilArray[i][0]-1][anvilArray[i][1]] == s1 || state1[anvilArray[i][0]-1][anvilArray[i][1]] == s2 || state1[anvilArray[i][0]-1][anvilArray[i][1]] == s3){ // hits a soldier
         state1[anvilArray[i][0]-1][anvilArray[i][1]] = pig;
         addScore(1);
@@ -1316,7 +1320,7 @@ function moveAnvils() {//moves all the anvils one unit down using the anvilArray
       continue;
     }
 
-    if(state1[anvilArray[i][0]][anvilArray[i][1]] != E && !isProjectile(state1[anvilArray[i][0]-1][anvilArray[i][1]])){//removal when it hits a pig
+    if(state1[anvilArray[i][0]][anvilArray[i][1]] != E && !isProjectile(state1[anvilArray[i][0]][anvilArray[i][1]])){//removal when it hits a pig
       
       state1[anvilArray[i][0]-1][anvilArray[i][1]] = E;
       if(state1[anvilArray[i][0]][anvilArray[i][1]] == s1 || state1[anvilArray[i][0]][anvilArray[i][1]] == s2 || state1[anvilArray[i][0]][anvilArray[i][1]] == s3){
@@ -1391,6 +1395,8 @@ function shootBoom() {////shoots the sonic shriekers from left top to down, usin
       breaker = true;
     }
 
+    if (replace == E) continue;
+    let teleported = false;
     for (let i = y1 + 2; i < height; i++) {
       let hit = state1[y1+i][pos];
       if (hit == a) {
@@ -1441,7 +1447,7 @@ function shootBoom() {////shoots the sonic shriekers from left top to down, usin
         break;
       }
       else if (hit == r5) {
-        state1[pos][x + i] = poof;
+        state1[y1+i][pos] = poof;
         addScore(4);
         break;
       }
@@ -1557,6 +1563,8 @@ function shootBoom() {////shoots the sonic shriekers from left top to down, usin
       }
       if(state1[i][pos] == portal)
       {
+        if (portals !== 2 || teleported) break;
+        teleported = true;
         if(pos == xp2 && i == yp2)
         {
           i = yp1;
